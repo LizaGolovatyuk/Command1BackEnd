@@ -81,8 +81,8 @@ def index(command):
                     cursor.execute(sql('bird_all.sql'))
                     birds_id = list(map(lambda tpl: tpl[0], cursor.fetchall()))
                     res_dict['result'] = [get_bird_info_by_id(cursor, id) for id in birds_id]
-            result = json.dumps(res_dict, indent=4)
-            return result
+            result = json.dumps(res_dict, indent=4, ensure_ascii=False)
+            return f"<pre>{result}</pre>"
 
 
 if __name__ == '__main__':
