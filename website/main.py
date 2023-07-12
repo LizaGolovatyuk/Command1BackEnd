@@ -1,5 +1,5 @@
 import psycopg2
-from flask import Flask, request, abort, render_template
+from flask import Flask, request, abort, render_template, Response
 from jinja2 import Template
 import DBconfig as DB
 from random import choices
@@ -10,7 +10,6 @@ SECRET_KEY = 'fkweruy#fgjoi43@df45'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-
 BASE_URL = 'http://127.0.0.1:5000'
 
 db_connection = None
@@ -23,66 +22,64 @@ def sql(filename, **kwargs):
     return Template(script).render(**kwargs)
 
 
-def get_bird_info_by_title_ru(cursor, bird_title):
-    cursor.execute(sql('bird_info_by_title_ru.sql', bird=bird_title))
-    return {key: val for key, val in zip([title.name for title in cursor.description], cursor.fetchall()[0])}
-
-
-def get_bird_info_by_id(cursor, id):
-    cursor.execute(sql('bird_info_by_id.sql', bird_id=id))
-    return {key: val for key, val in zip([title.name for title in cursor.description], cursor.fetchall()[0])}
-
-
-
-
 @app.route('/<string:command>', methods=['GET'])
 def index(command):
     """
     Список api команд:
-        order?bird_title=<имя птицы>&bird_count=<количество>
-        - возвращает массив видов птиц, допустимого базой данных размера (возможно будет меньше чем задано)
-        принадлежащих тому же отряду, что и заданная птица
+        birds
+        - возвращает список всех птиц в базе
 
-        family?bird_title=<имя птицы>&bird_count=<количество>
-        - возвращает массив видов птиц, допустимого базой данных размера (возможно будет меньше чем задано)
-        принадлежащих тому же семейству, что и заданная птица
+        random_bird
+        - возвращает 1 случайную птицу из базы
 
-        genus?bird_title=<имя птицы>&bird_count=<количество>
-        - возвращает массив видов птиц, допустимого базой данных размера (возможно будет меньше чем задано)
-        принадлежащих тому же роду, что и заданная птица
+        birds_by?common=...&[count=...]&[bird_title=...]
+        - возвращает список птиц по заданным параметрам
+            common - отвечает за то, чем птицы будут похожи
+                common='order'  - одного отряда
+                common='family' - одного семейства
+                common='genus'  - одного рода
+            count - количество птиц в результате
+                * по умолчанию 4
+                ** если указано слишком большое число, выведет столько, сколько есть в базе
+            bird_title - русское название птицы
+                * если указано, то будет проверять чтобы параметр common совпадал с тем же, у переданной птицы
+                ** в том виде, в котором оно лежит в titleRu в базе данных
     """
     if request.method != 'GET':
         abort(400)
     else:
-        if command not in ['birds', 'order', 'family', 'genus']:
-            abort(404)
         with db_connection.cursor() as cursor:
-            result = ""
+            common = request.args.get('common', 'family')
+            count = int(request.args.get('count', 4))
             bird_title = request.args.get('bird_title', None)
-            bird_count = int(request.args.get('bird_count', 0))
-            cursor.execute(sql('bird_info_by_title_ru.sql', bird=bird_title))
-            bird_info = get_bird_info_by_title_ru(cursor, bird_title)
-            print(bird_info)
-            res_dict = {
-                'request': f'{command}?bird_title={bird_title}&bird_count={bird_count}',
-                'good': True
-            }
+            res_dict = dict()
             match command:
-                case 'order':
-                    pass
-                case 'family':
-                    pass
-                case 'genus':
-                    cursor.execute(sql('bird_group_by_genus.sql', genus_id=bird_info['genus_id']))
-                    birds_id = list(map(lambda tpl: tpl[0], cursor.fetchall()))
-                    random_id = choices(birds_id, k=min(bird_count, len(birds_id)))
-                    res_dict['result'] = [get_bird_info_by_id(cursor, id) for id in random_id]
                 case 'birds':
-                    cursor.execute(sql('bird_all.sql'))
-                    birds_id = list(map(lambda tpl: tpl[0], cursor.fetchall()))
-                    res_dict['result'] = [get_bird_info_by_id(cursor, id) for id in birds_id]
-            result = json.dumps(res_dict, indent=4, ensure_ascii=False)
-            return f"<pre>{result}</pre>"
+                    res_dict['request'] = 'birds'
+                    cursor.execute(sql('all_birds.sql'))
+                    res_dict['result'] = list(map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
+                                                                                            tpl)},
+                                                  cursor.fetchall()))
+                case 'random_bird':
+                    res_dict['request'] = 'random_bird'
+                    cursor.execute(sql('random_bird.sql'))
+                    res_dict['result'] = list(
+                        map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
+                                                                      tpl)},
+                            cursor.fetchall()))
+                case 'birds_by':
+                    tmp_title = (
+                        '',
+                        '&bird_title=' + ('', bird_title)[not (bird_title is None)]
+                    )[not (bird_title is None)]
+                    res_dict['request'] = f'{command}?common={common}&count={count}{tmp_title}'
+                case _:
+                    abort(404)
+            return Response(
+                response=json.dumps(res_dict, indent=4, ensure_ascii=False),
+                mimetype='application/json',
+                status=200
+            )
 
 
 if __name__ == '__main__':
