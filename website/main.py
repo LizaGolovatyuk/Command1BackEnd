@@ -66,6 +66,14 @@ def index(command):
                         map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                       tpl)},
                             cursor.fetchall()))[0]
+                    print(res_dict)
+                    print(res_dict['result']['species_titleru'] is None)
+                    while res_dict['result']['species_titleru'] is None:
+                        cursor.execute(sql('random_bird.sql'))
+                        res_dict['result'] = list(
+                            map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
+                                                                          tpl)},
+                                cursor.fetchall()))[0]
                 case 'birds_by':
                     res_dict['request'] = f'{command}?bird_title={bird_title}&count={count}'
                     cursor.execute(sql('birds_by_family.sql', bird_title=bird_title, bird_count=count))
