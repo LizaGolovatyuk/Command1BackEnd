@@ -14,7 +14,7 @@ current_family AS (
 good_genus AS (
 	SELECT id
 		FROM bird_genus
-		WHERE familyId <> (SELECT * FROM current_family)
+		WHERE familyId = (SELECT * FROM current_family)
 		ORDER BY RANDOM()
 		LIMIT 5
 ),
