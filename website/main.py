@@ -49,9 +49,8 @@ def index(command):
         abort(400)
     else:
         with db_connection.cursor() as cursor:
-            common = request.args.get('common', 'family')
             count = int(request.args.get('count', 4))
-            bird_title = request.args.get('bird_title', None)
+            bird_title = request.args.get('bird_title', 'тёмный козодой')
             res_dict = dict()
             match command:
                 case 'birds':
@@ -66,13 +65,14 @@ def index(command):
                     res_dict['result'] = list(
                         map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                       tpl)},
-                            cursor.fetchall()))
+                            cursor.fetchall()))[0]
                 case 'birds_by':
-                    tmp_title = (
-                        '',
-                        '&bird_title=' + ('', bird_title)[not (bird_title is None)]
-                    )[not (bird_title is None)]
-                    res_dict['request'] = f'{command}?common={common}&count={count}{tmp_title}'
+                    res_dict['request'] = f'{command}?bird_title={bird_title}&count={count}'
+                    cursor.execute(sql('birds_by_family.sql', bird_title=bird_title, bird_count=count))
+                    res_dict['result'] = list(
+                        map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
+                                                                      tpl)},
+                            cursor.fetchall()))
                 case _:
                     abort(404)
             return Response(
