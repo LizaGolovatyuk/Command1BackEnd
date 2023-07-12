@@ -1,5 +1,5 @@
 import psycopg2
-from flask import Flask, request, abort, render_template, Response
+from flask import Flask, request, abort, render_template, Response, jsonify
 from jinja2 import Template
 import DBconfig as DB
 from random import choices
@@ -66,8 +66,6 @@ def index(command):
                         map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                       tpl)},
                             cursor.fetchall()))[0]
-                    print(res_dict)
-                    print(res_dict['result']['species_titleru'] is None)
                     while res_dict['result']['species_titleru'] is None:
                         cursor.execute(sql('random_bird.sql'))
                         res_dict['result'] = list(
@@ -83,11 +81,13 @@ def index(command):
                             cursor.fetchall()))
                 case _:
                     abort(404)
-            return Response(
+            response = Response(
                 response=json.dumps(res_dict, indent=4, ensure_ascii=False),
                 mimetype='application/json',
                 status=200
             )
+            response.headers.add("Access-Control-Allow-Origin", "*")
+            return response
 
 
 if __name__ == '__main__':
