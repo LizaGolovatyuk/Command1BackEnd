@@ -61,6 +61,9 @@ CREATE TABLE IF NOT EXISTS public.bird_species
 			ON DELETE SET NULL
 );
 
+DROP TABLE public.bio_taxons;
+DROP TABLE public.bio_taxons_locale;
+
 INSERT INTO public.bird_order (latin, avibaseId, titleRu, titleEn, titleEs)
 	SELECT 
 			bt.latin,
