@@ -1,25 +1,19 @@
 import psycopg2
-from flask import Flask, request, abort, render_template, Response, jsonify
-from jinja2 import Template
-import DBconfig as DB
-from random import choices
 import json
+from application.database import config
+from application.functions import sql
+from flask import Flask, request, abort, Response, Template
 
+# переменные среды Flask
 DEBUG = True
 SECRET_KEY = 'fkweruy#fgjoi43@df45'
+BASE_URL = 'http://127.0.0.1:5000'
+
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-BASE_URL = 'http://127.0.0.1:5000'
 
 db_connection = None
-
-
-def sql(filename, **kwargs):
-    script = ""
-    with open(f'sql/{filename}', 'r', encoding='utf-8') as file:
-        script = file.read()
-    return Template(script).render(**kwargs)
 
 
 @app.route('/<string:command>', methods=['GET'])
@@ -55,26 +49,26 @@ def index(command):
             match command:
                 case 'birds':
                     res_dict['request'] = 'birds'
-                    cursor.execute(sql('all_birds.sql'))
+                    cursor.execute(sql('select_all_birds.sql'))
                     res_dict['result'] = list(map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                                             tpl)},
                                                   cursor.fetchall()))
                 case 'random_bird':
                     res_dict['request'] = 'random_bird'
-                    cursor.execute(sql('random_bird.sql'))
+                    cursor.execute(sql('select_random_bird.sql'))
                     res_dict['result'] = list(
                         map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                       tpl)},
                             cursor.fetchall()))[0]
                     while res_dict['result']['species_titleru'] is None:
-                        cursor.execute(sql('random_bird.sql'))
+                        cursor.execute(sql('select_random_bird.sql'))
                         res_dict['result'] = list(
                             map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                           tpl)},
                                 cursor.fetchall()))[0]
                 case 'birds_by':
                     res_dict['request'] = f'{command}?bird_title={bird_title}&count={count}'
-                    cursor.execute(sql('birds_by_family.sql', bird_title=bird_title, bird_count=count))
+                    cursor.execute(sql('select_birds_by_family.sql', bird_title=bird_title, bird_count=count))
                     res_dict['result'] = list(
                         map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                       tpl)},
@@ -93,10 +87,10 @@ def index(command):
 if __name__ == '__main__':
     try:
         db_connection = psycopg2.connect(
-            host=DB.host,
-            user=DB.user,
-            password=DB.password,
-            database=DB.db_name
+            host=config.host,
+            user=config.user,
+            password=config.password,
+            database=config.db_name
         )
         with db_connection.cursor() as cursor:
             cursor.execute("SELECT version()")

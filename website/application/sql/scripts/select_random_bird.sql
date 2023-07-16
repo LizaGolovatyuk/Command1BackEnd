@@ -1,3 +1,7 @@
+/*
+Возвращает данные по 1 случайной птице
+*/
+
 WITH bi (minId, maxId) AS (
 	SELECT MIN(id), MAX(id) FROM bird_species
 ),
