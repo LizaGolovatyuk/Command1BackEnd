@@ -18,7 +18,7 @@ SELECT
     bs.id           AS bird_id,
 
 	bs.latin 		AS 	species_latin,
-	bs.avibaseId 	AS  species_avibaseId,
+	bs.ebirdId 	    AS  species_ebirdId,
 	bs.titleRu 		AS 	species_titleRu,
 	bs.titleEn 		AS 	species_titleEn,
 	bs.titleEs	 	AS 	species_titleEs,
@@ -26,19 +26,19 @@ SELECT
 	bs.video        AS  species_video,
 
 	bg.latin 		AS 	genus_latin,
-	bg.avibaseId 	AS  genus_avibaseId,
+	bg.ebirdId 	    AS  genus_ebirdId,
 	bg.titleRu 		AS 	genus_titleRu,
     bg.titleEn 		AS 	genus_titleEn,
 	bg.titleEs 		AS 	genus_titleEs,
 
 	bf.latin 		AS 	family_latin,
-	bf.avibaseId 	AS  family_avibaseId,
+	bf.ebirdId 	    AS  family_ebirdId,
 	bf.titleRu 		AS 	family_titleRu,
 	bf.titleEn 		AS 	family_titleEn,
 	bf.titleEs 		AS 	family_titleEs,
 
 	bo.latin 		AS 	order_latin,
-	bo.avibaseId 	AS  order_avibaseId,
+	bo.ebirdId 	    AS  order_ebirdId,
 	bo.titleRu 		AS 	order_titleRu,
 	bo.titleEn 		AS 	order_titleEn,
 	bo.titleEs 		AS 	order_titleEs
