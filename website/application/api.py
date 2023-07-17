@@ -17,19 +17,16 @@ class Api:
         return Api.__call__(*args, **kwargs)
     @staticmethod
     def __call__(db_connection, request: Request):
-        print('__call__')
         Api.__db_connection__ = db_connection
         Api.__request__ = request
         return Api.__inner_decorator__
 
     @staticmethod
     def __inner_decorator__(function: Callable[[str], str]):
-        print('__inner_decorator__')
         return Api.__wrapper__
 
     @staticmethod
     def __wrapper__(command: str):
-        print('__wrapper__')
         if Api.__request__.method != 'GET':
             abort(400)
         else:
@@ -62,6 +59,13 @@ class Api:
                     case 'birds_by':
                         res_dict['request'] = f'{command}?bird_title={bird_title}&count={count}'
                         cursor.execute(sql('select_birds_by_family.sql', bird_title=bird_title, bird_count=count))
+                        res_dict['result'] = list(
+                            map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
+                                                                          tpl)},
+                                cursor.fetchall()))
+                    case 'birds_by_one_family':
+                        res_dict['request'] = f'{command}?count={count}'
+                        cursor.execute(sql('select_birds_by_one_family.sql', bird_count=count))
                         res_dict['result'] = list(
                             map(lambda tpl: {key: val for key, val in zip([title.name for title in cursor.description],
                                                                           tpl)},

@@ -11,7 +11,7 @@ from .database import config
 def sql(filename, **kwargs) -> str:
     script = ""
     try:
-        with open(f'application/sql/scripts/{filename}', 'r', encoding='utf-8') as file:
+        with open(f'application/database/scripts/{filename}', 'r', encoding='utf-8') as file:
             script = file.read()
     except Exception as ex:
         pass # todo Добавить логгер
