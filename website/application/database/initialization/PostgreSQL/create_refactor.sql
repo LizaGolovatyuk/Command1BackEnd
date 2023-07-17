@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS public.bird_order
 (
     id			SERIAL			PRIMARY KEY,
     latin     	varchar(255)    NOT NULL,
-	avibaseId 	varchar(255),
+	ebirdId 	varchar(255)    NULL,
 	titleRu		varchar(255),
 	titleEn		varchar(255),
 	titleEs		varchar(255),
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS public.bird_family
 (
     id			SERIAL			PRIMARY KEY,
     latin     	varchar(255)    NOT NULL,
-	avibaseId 	varchar(255),
+	ebirdId 	varchar(255)    NULL,
 	titleRu		varchar(255),
 	titleEn		varchar(255),
 	titleEs		varchar(255),
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS public.bird_genus
 (
     id			SERIAL			PRIMARY KEY,
     latin     	varchar(255)    NOT NULL,
-	avibaseId 	varchar(255),
+	ebirdId 	varchar(255)    NULL,
 	titleRu		varchar(255),
 	titleEn		varchar(255),
 	titleEs		varchar(255),
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS public.bird_species
 (
     id			SERIAL			PRIMARY KEY,
     latin     	varchar(255)    NOT NULL,
-	avibaseId 	varchar(255),
+	ebirdId 	varchar(255)    NULL,
 	titleRu		varchar(255),
 	titleEn		varchar(255),
 	titleEs		varchar(255),
@@ -64,10 +64,10 @@ CREATE TABLE IF NOT EXISTS public.bird_species
 DROP TABLE public.bio_taxons;
 DROP TABLE public.bio_taxons_locale;
 
-INSERT INTO public.bird_order (latin, avibaseId, titleRu, titleEn, titleEs)
+INSERT INTO public.bird_order (latin, ebirdId, titleRu, titleEn, titleEs)
 	SELECT 
 			bt.latin,
-			bt.avibaseid,
+			NULL,
 			btl.title_ru,
 			btl.title_en,
 			btl.title_es
@@ -76,11 +76,29 @@ INSERT INTO public.bird_order (latin, avibaseId, titleRu, titleEn, titleEs)
 			INNER JOIN public.bio_taxons_locale AS btl
 				ON btl.taxonid = bt.id
 		WHERE type = 'order';
-		
-INSERT INTO public.bird_genus (latin, avibaseId, titleRu, titleEn, titleEs, familyId)
+
+INSERT INTO public.bird_family (latin, ebirdId, titleRu, titleEn, titleEs, orderId)
+	SELECT
+			bt.latin,
+			NULL,
+			btl.title_ru,
+			btl.title_en,
+			btl.title_es,
+			(
+				SELECT bt.parentid - MAX(parentid)
+					FROM public.bio_taxons AS bt1
+					WHERE type = 'order'
+			)
+		FROM
+			public.bio_taxons AS bt
+			INNER JOIN public.bio_taxons_locale AS btl
+				ON btl.taxonid = bt.id
+		WHERE type = 'family';
+
+INSERT INTO public.bird_genus (latin, ebirdId, titleRu, titleEn, titleEs, familyId)
 	SELECT 
 			bt.latin,
-			bt.avibaseid,
+			NULL,
 			btl.title_ru,
 			btl.title_en,
 			btl.title_es,
@@ -95,10 +113,10 @@ INSERT INTO public.bird_genus (latin, avibaseId, titleRu, titleEn, titleEs, fami
 				ON btl.taxonid = bt.id
 		WHERE type = 'genus';
 		
-INSERT INTO public.bird_species (latin, avibaseId, titleRu, titleEn, titleEs, genusId)
+INSERT INTO public.bird_species (latin, ebirdId, titleRu, titleEn, titleEs, genusId)
 	SELECT 
 			bt.latin,
-			bt.avibaseid,
+			NULL,
 			btl.title_ru,
 			btl.title_en,
 			btl.title_es,
