@@ -5,7 +5,7 @@
 from jinja2 import Template
 import psycopg2
 from psycopg2._psycopg import connection
-from database import config
+from .database import config
 
 
 def sql(filename, **kwargs) -> str:
