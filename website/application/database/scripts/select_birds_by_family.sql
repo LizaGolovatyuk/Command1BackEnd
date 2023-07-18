@@ -38,6 +38,9 @@ SELECT
 		bs.titleRu 		AS 	species_titleRu,
 		bs.titleEn 		AS 	species_titleEn,
 		bs.titleEs	 	AS 	species_titleEs,
+		bs.avatar       AS  species_avatar,
+		bs.video        AS  species_video,
+		bs.preview      AS  species_preview,
 
 		bg.latin 		AS 	genus_latin,
 		bg.ebirdId 	    AS  genus_ebirdId,
