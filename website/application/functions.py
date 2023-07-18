@@ -44,7 +44,6 @@ def dzip(cursor: cursor, base_url: str) -> List[object]:
             d['species_avatar'] = f'{base_url}avatar?filename={d["species_avatar"]}'
         if 'species_preview' in keys:
             d['species_preview'] = f'{base_url}preview?filename={d["species_preview"]}'
-        print(d)
         if 'species_video' in keys and not (d['species_video'] is None):
             d['species_video'] = f'{base_url}video?filename={d["species_video"]}'
     return lst
