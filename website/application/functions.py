@@ -32,9 +32,19 @@ def to_url(string: str) -> str:
     return '%20'.join(string.split(' '))
 
 
-def dzip(cursor: cursor) -> List[object]:
-    return list(
-                map(lambda data: {key: val for key, val in zip([title.name for title in cursor.description],
-                                                                data)},
-                    cursor.fetchall())
-               )
+def dzip(cursor: cursor, base_url: str) -> List[object]:
+    lst = list(
+               map(lambda data: {key: val for key, val in zip([title.name for title in cursor.description],
+                                                               data)},
+               cursor.fetchall())
+              )
+    for d in lst:
+        keys = d.keys()
+        if 'species_avatar' in keys:
+            d['species_avatar'] = f'{base_url}avatar?filename={d["species_avatar"]}'
+        if 'species_preview' in keys:
+            d['species_preview'] = f'{base_url}preview?filename={d["species_preview"]}'
+        print(d)
+        if 'species_video' in keys and not (d['species_video'] is None):
+            d['species_video'] = f'{base_url}video?filename={d["species_video"]}'
+    return lst
