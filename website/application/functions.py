@@ -25,3 +25,7 @@ def db_connecting() -> connection:
             password=config.password,
             database=config.db_name
         )
+
+
+def to_url(string: str) -> str:
+    return '%20'.join(string.split(' '))
