@@ -119,7 +119,7 @@ class BirdParser:
             handler.write(video_data)
         print(f'preview_patch: {self.__bird_id__}.jpg')
         print(f'video_patch: {self.__bird_id__}.mp4')
-        return f'{self.__bird_id__}.jpg', f'{self.__bird_id__}.mp4'
+        return f'{self.__bird_id__}.mp4', f'{self.__bird_id__}.jpg'
 
     def get_video_patch(self) -> str:
         return self.__video_patch__
