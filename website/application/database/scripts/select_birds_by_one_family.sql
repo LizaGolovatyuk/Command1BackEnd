@@ -15,7 +15,7 @@ WITH random_family_id AS (
         LIMIT {{bird_count}}
 )
 SELECT
-    bs.id           AS bird_id,
+    bs.id           AS  bird_id,
 
 	bs.latin 		AS 	species_latin,
 	bs.ebirdId 	    AS  species_ebirdId,
@@ -24,6 +24,7 @@ SELECT
 	bs.titleEs	 	AS 	species_titleEs,
 	bs.avatar       AS  species_avatar,
 	bs.video        AS  species_video,
+	bs.preview      AS  species_preview,
 
 	bg.latin 		AS 	genus_latin,
 	bg.ebirdId 	    AS  genus_ebirdId,
@@ -50,5 +51,6 @@ SELECT
 			    ON bg.familyId = bf.id
 		    INNER JOIN public.bird_order AS bo
 			    ON bf.orderId = bo.id
+    WHERE bs.titleru IS NOT NULL
     ORDER BY RANDOM()
     LIMIT {{bird_count}};
