@@ -4,8 +4,9 @@
 
 from jinja2 import Template
 import psycopg2
-from psycopg2._psycopg import connection
+from psycopg2._psycopg import connection, cursor
 from .database import config
+from typing import List
 
 
 def sql(filename, **kwargs) -> str:
@@ -29,3 +30,11 @@ def db_connecting() -> connection:
 
 def to_url(string: str) -> str:
     return '%20'.join(string.split(' '))
+
+
+def dzip(cursor: cursor) -> List[object]:
+    return list(
+                map(lambda data: {key: val for key, val in zip([title.name for title in cursor.description],
+                                                                data)},
+                    cursor.fetchall())
+               )
