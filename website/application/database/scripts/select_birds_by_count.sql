@@ -1,7 +1,3 @@
-/*
-Возвращает данные по всем птицам
-*/
-
 SELECT
         bs.id           AS  bird_id,
 
@@ -38,4 +34,6 @@ SELECT
 			INNER JOIN public.bird_family AS bf
 				ON bg.familyId = bf.id
 			INNER JOIN public.bird_order AS bo
-				ON bf.orderId = bo.id;
+				ON bf.orderId = bo.id
+    ORDER BY bs.id
+    LIMIT {{bird_count}};

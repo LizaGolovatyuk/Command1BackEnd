@@ -51,6 +51,10 @@ SELECT
 			    ON bg.familyId = bf.id
 		    INNER JOIN public.bird_order AS bo
 			    ON bf.orderId = bo.id
-    WHERE bs.titleru IS NOT NULL AND bs.video IS NOT NULL
+    WHERE
+        bs.titleru IS NOT NULL
+        AND bs.video IS NOT NULL
+        AND bs.avatar <> 'undefined.jpg'
+        AND bs.preview <> 'undefined.png'
     ORDER BY RANDOM()
     LIMIT {{bird_count}};
