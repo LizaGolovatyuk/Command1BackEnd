@@ -1,4 +1,4 @@
 BEGIN;
     UPDATE public.bird_species
-    SET (avatar, video, preview) = ('undefined.jpg', NULL, 'undefined.png');
+    SET (ebirdid, avatar, video, preview) = (NULL, 'undefined.jpg', NULL, 'undefined.png');
 COMMIT;
