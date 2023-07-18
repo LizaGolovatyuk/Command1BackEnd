@@ -14,12 +14,11 @@ def sql(filename, **kwargs) -> str:
         with open(f'application/database/scripts/{filename}', 'r', encoding='utf-8') as file:
             script = file.read()
     except Exception as ex:
-        pass # todo Добавить логгер
+        pass
     return Template(script).render(**kwargs)
 
 
 def db_connecting() -> connection:
-    # todo логгер и обработка исключений
     return psycopg2.connect(
             host=config.host,
             user=config.user,
