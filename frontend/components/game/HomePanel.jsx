@@ -29,7 +29,7 @@ export default function HomePanel() {
                 <div className={classes.title}>
                     Узнай птицу
                 </div>
-                <img src="../../../bird.png" className={classes.bird}/>
+                <img src="bird.png" className={classes.bird}/>
                 <div className={classes.subTitle}>
                     Угадайте {MaxCountRounds} птиц
                 </div>
