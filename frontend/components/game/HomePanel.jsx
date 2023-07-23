@@ -8,16 +8,25 @@ function startGame(dispatch) {
         dispatch({type: Actions.InitializeRound});
         dispatch({type: Actions.InitializeScore});
         dispatch({type: Actions.InitializeState});
-        fetch("http://127.0.0.1:5000/media_birds_by_one_family")
-            .then(responce => responce.json)
-            .then(json => {
-                dispatch({type: Actions.FinishLoad})
-                return dispatch({type: Actions.SetRoundsData, payload: json.result});
+        const url = "http://127.0.0.1:5000/media_birds_by_one_family";
+        const urls = Array(MaxCountRounds).fill(url)
+        Promise.all(urls.map(url => fetch(url)))
+            .then(async (responses) => {
+                const roundsData = [];
+                let index = 1;
+                for (let req of responses) {
+                    roundsData.push({
+                        roundNumber: index,
+                        AnswerIndex: Math.floor(Math.random()*5),
+                        data: await req.json()
+                    });
+                    index += 1;
+                }
+                dispatch({type: Actions.FinishLoad});
+                return dispatch({type: Actions.SetRoundsData, payload: roundsData});
             })
-            .catch(error => {
-                dispatch({type: Actions.Error, payload: error})
-            })
-            .finally(() => dispatch({type: Actions.FinishLoad}))
+            .catch(error => dispatch({type: Actions.Error, payload: error}))
+            .finally(() => dispatch({type: Actions.FinishLoad}));
     }
 }
 
