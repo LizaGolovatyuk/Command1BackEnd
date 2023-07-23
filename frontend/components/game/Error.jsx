@@ -1,10 +1,11 @@
 import {useSelector} from "react-redux";
+import classes from "./UI/Error.module.css";
 
 export default function Error() {
     return (
         <>
-            <div>
-                Сервис временно недоступен
+            <div className={classes.text}>
+                В данный момент сервис не доступен
             </div>
         </>
     )

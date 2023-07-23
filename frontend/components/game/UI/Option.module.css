@@ -1,0 +1,29 @@
+
+.option {
+    font-size: 24px;
+    font-weight: 500;
+    color: #306669;
+    background-color: #ecf6f4;
+    border-radius: 5px;
+    border: 1px solid rgba(55, 168, 84, 0.1);
+    transition: all 0.3s ease;
+}
+
+.option:hover {
+    cursor: pointer;
+    filter: brightness(103%);
+}
+
+.blocked {
+    pointer-events: none;
+}
+
+.correctAnswer {
+    background-color: #55a44d;
+    color: white;
+}
+
+.incorrectAnswer {
+    background-color: #e16f40;
+    color: white;
+}

@@ -15,7 +15,7 @@ export default function EndPanel() {
                     <div className={classes.score}>+{count}</div>
                 </div>
                 <div className={classes.subTitle}>
-                    Вы узнали <span class={classes.number}>{count} </span>
+                    Вы узнали <span className={classes.number}>{count} </span>
                     птиц из <span className={classes.number}>{MaxCountRounds}</span>
                 </div>
             </div>

@@ -9,16 +9,18 @@ function startGame(dispatch) {
         dispatch({type: Actions.InitializeScore});
         dispatch({type: Actions.InitializeState});
         const url = "http://127.0.0.1:5000/media_birds_by_one_family";
-        const urls = Array(MaxCountRounds).fill(url)
+        const urls = Array(MaxCountRounds).fill(url);
         Promise.all(urls.map(url => fetch(url)))
             .then(async (responses) => {
                 const roundsData = [];
-                let index = 1;
+                let index = 0;
                 for (let req of responses) {
+                    const json = await req.json()
                     roundsData.push({
-                        roundNumber: index,
-                        AnswerIndex: Math.floor(Math.random()*5),
-                        data: await req.json()
+                        roundIndex: index,
+                        correctIndex: Math.floor(Math.random()*4),
+                        answerIndex: undefined,
+                        data: json.result
                     });
                     index += 1;
                 }

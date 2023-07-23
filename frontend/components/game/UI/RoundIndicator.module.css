@@ -1,0 +1,59 @@
+.card {
+    width: 24px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin-right: 12px;
+    margin-left: 12px;
+    margin-bottom: 20px;
+}
+
+.bird {
+    max-width: 24px;
+    max-height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+.birdIncorrect {
+    background-image: url("../../../public/bird-incorrect.svg");
+}
+
+.birdCorrect {
+    background-image: url("../../../public/bird-correct.svg");
+}
+
+.birdCurrent {
+    background-image: url("../../../public/bird-current.svg");
+}
+
+.birdDisabled {
+    background-image: url("../../../public/bird-disabled.svg");
+    pointer-events: none;
+}
+
+.marker {
+    width: 6px;
+    height: 6px;
+}
+
+.markerIncorrect {
+    background-image: url("../../../public/marker-incorrect.svg");
+}
+
+.markerCorrect {
+    background-image: url("../../../public/marker-correct.svg");
+}
+
+.markerCurrent {
+    background-image: url("../../../public/marker-current.svg");
+}
+
+.markerDisabled {
+    display: none;
+}

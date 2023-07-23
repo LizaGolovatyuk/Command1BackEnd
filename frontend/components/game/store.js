@@ -1,6 +1,6 @@
 import {createStore} from "redux";
 
-export const MaxCountRounds = 10;
+export const MaxCountRounds = 5;
 
 export const PanelStates = {
     StartGame: "Start",
@@ -13,6 +13,7 @@ export const PanelStates = {
 export const defaultState = {
     panelState: PanelStates.StartGame,
     currentRound: undefined,
+    viewRound: undefined,
     score: undefined,
     loading: false,
     error: undefined,
@@ -27,10 +28,14 @@ export const Actions = {
     InitializeScore: "InitializeScore",
     IncrementScore: "IncrementScore",
     SetRoundsData: "SetRoundsData",
+    SetRoundIndex: "SetRoundIndex",
+    SetViewRound: "SetViewRound",
+    SetAnswer: "SetAnswer",
     SetDefault: "SetDefault",
     StartLoad: "StartLoad",
     FinishLoad: "FinishLoad",
-    Error: "Error"
+    Error: "Error",
+    SetAppData: "SetAppData"
 }
 
 const reducer = (state= defaultState, action) => {
@@ -45,10 +50,14 @@ const reducer = (state= defaultState, action) => {
             return {...state, panelState: getNextState(state.panelState) || PanelStates.StartGame};
 
         case Actions.InitializeRound:
-            return {...state, currentRound: 1};
+            return {...state, currentRound: 0, viewRound: 0};
 
         case Actions.NextRound:
-            return {...state, currentRound: getNextRound(state.currentRound)};
+            const nextNumber = getNextRound(state.currentRound)
+            return {...state, currentRound: nextNumber, viewRound: nextNumber};
+
+        case Actions.SetViewRound:
+            return {...state, viewRound: action.payload}
 
         case Actions.InitializeScore:
             return {...state, score: 0}
@@ -67,6 +76,14 @@ const reducer = (state= defaultState, action) => {
 
         case Actions.Error:
             return {...state, panelState: PanelStates.Error, error: action.payload}
+
+        case Actions.SetAnswer:
+            const arr = Object.assign([], state.roundsData);
+            arr[state.currentRound].answerIndex = action.payload;
+            return {...state, roundsData: arr}
+
+        case Actions.SetAppData:
+            return {...state, appData: action.payload}
 
         default:
             return state;
@@ -97,8 +114,4 @@ function getNextRound(currentRound) {
         return currentRound + 1;
     }
     return undefined;
-}
-
-async function getRoundsData() {
-
 }

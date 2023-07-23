@@ -9,12 +9,13 @@ import {NotFound} from "next/dist/client/components/error";
 import classes from './UI/Main.module.css'
 
 export default function Main() {
-    const state = useSelector(state => state.panelState);
+    const appState = useSelector(state => state.panelState);
     const loading = useSelector(state => state.loading);
+    console.log('state: ', appState)
     let component;
     component = loading && <Loading/>
     if (!loading) {
-        switch (state) {
+        switch (appState) {
             case PanelStates.StartGame:
                 component = <HomePanel/>
                 break;
